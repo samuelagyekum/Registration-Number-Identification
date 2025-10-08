@@ -89,13 +89,23 @@ def generate_registration_number(last_name: str, first_name: str) -> str:
 # ==============================
 st.set_page_config(page_title="Student Registration Number Generator", page_icon="🎓", layout="centered")
 
-st.title("🎓 Student Registration Number Generator")
+st.title(" Student Registration Number Generator (" Group 14)")
 
 st.write(
     """
     Enter a **last name** and **first name** to generate a unique student registration number.
     The number is based on consonants, letters, and a sequential counter.
     """
+)
+st.markdown(
+    """
+    **Group Members:**  
+    Rabecca Kanini KATING'U  <br>
+    Samuel AGYEKUM  <br>
+    Zo Lalaina Andrianina ANDRIANANTENAINA  <br>
+    Loyde AIJUKA
+    """,
+    unsafe_allow_html=True
 )
 
 # Input form
