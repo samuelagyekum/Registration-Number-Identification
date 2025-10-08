@@ -89,7 +89,7 @@ def generate_registration_number(last_name: str, first_name: str) -> str:
 # ==============================
 st.set_page_config(page_title="Student Registration Number Generator", page_icon="🎓", layout="centered")
 
-st.title(" Student Registration Number Generator ( Group 14)")
+st.title(" Student Registration Number Generator ( Group 13)")
 
 st.write(
     """
