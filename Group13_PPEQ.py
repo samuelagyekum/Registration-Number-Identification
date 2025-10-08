@@ -5,13 +5,18 @@ import streamlit as st
 import pandas as pd
 
 # ==============================
-# Data Structures & Constants
+# Session State Initialization
 # ==============================
-students = {}
-global_count = 0
+if 'students' not in st.session_state:
+    st.session_state.students = {}
+if 'global_count' not in st.session_state:
+    st.session_state.global_count = 0
+
+# ==============================
+# Constants
+# ==============================
 VOWELS = set("AEIOU")
 
-# Manual accent replacement table
 ACCENT_MAP = {
     'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Ā':'A','Ă':'A','Ą':'A',
     'à':'A','á':'A','â':'A','ã':'A','ä':'A','å':'A','ā':'A','ă':'A','ą':'A',
@@ -28,9 +33,7 @@ ACCENT_MAP = {
     'ù':'U','ú':'U','û':'U','ü':'U','ũ':'U','ū':'U','ŭ':'U','ů':'U','ű':'U','ų':'U',
     'Ý':'Y','ý':'Y','ÿ':'Y','Ÿ':'Y',
     'ß':'SS',
-    'á':'A','é':'E','í':'I','ó':'O','ú':'U','ü':'U','ñ':'N',
-    'Á':'A','É':'E','Í':'I','Ó':'O','Ú':'U','Ü':'U','Ñ':'N',
-    'Ä':'A','Ö':'O','Ü':'U','ä':'A','ö':'O','ü':'U','ß':'SS',
+    'Ä':'A','Ö':'O','Ü':'U','ä':'A','ö':'O','ü':'U',
     'Å':'A','å':'A','Ø':'O','ø':'O','Æ':'AE','æ':'AE',
     'Ł':'L','ł':'L','Š':'S','š':'S','Ž':'Z','ž':'Z','Ć':'C','ć':'C','Đ':'D','đ':'D','Ř':'R','ř':'R','Ň':'N','ň':'N'
 }
@@ -57,8 +60,6 @@ def extract_letters(name_norm: str) -> str:
     return name_norm[:3].ljust(3, "X")
 
 def generate_registration_number(last_name: str, first_name: str) -> str:
-    global global_count
-
     if not (is_valid_name_input(last_name) and is_valid_name_input(first_name)):
         return "❌ Error: Names must contain only letters, spaces, or hyphens."
 
@@ -66,17 +67,21 @@ def generate_registration_number(last_name: str, first_name: str) -> str:
     first_norm = normalize_name_for_key(first_name)
     key = (last_norm, first_norm)
 
-    if key in students:
-        return f"⚠️ Already registered: {students[key]['reg']}"
+    if key in st.session_state.students:
+        return f"⚠️ Already registered: {st.session_state.students[key]['reg']}"
 
     field1 = extract_consonants(last_norm)
     field2 = extract_letters(first_norm)
 
-    global_count += 1
-    count = str(global_count).rjust(3, "0")
+    st.session_state.global_count += 1
+    count = str(st.session_state.global_count).rjust(3, "0")
     reg_number = field1 + field2 + count
 
-    students[key] = {"reg": reg_number, "last": last_name, "first": first_name}
+    st.session_state.students[key] = {
+        "reg": reg_number,
+        "last": last_name,
+        "first": first_name
+    }
     return reg_number
 
 # ==============================
@@ -112,9 +117,9 @@ if submit_button:
             st.success(f"✅ Registration Number: **{reg_num}**")
 
 # Display all registered students
-if students:
+if st.session_state.students:
     st.subheader("📋 Registered Students")
-    df = pd.DataFrame(students.values())
+    df = pd.DataFrame(st.session_state.students.values())
     st.dataframe(df, use_container_width=True)
 else:
     st.info("No students registered yet.")
